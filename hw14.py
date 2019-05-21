@@ -12,14 +12,14 @@ def first():
         con = None
         con = lite.connect('Chinook_Sqlite.sqlite')
         query_invoice = '''
-              SELECT Distinct Customer.CustomerID, Customer.FirstName, Customer.LastName, Customer.Phone, Customer.Company
+              SELECT Distinct Customer.CustomerID, Customer.FirstName  || ' ' ||  Customer.LastName, Customer.Phone, Customer.Company
               FROM Customer 
               INNER JOIN Employee ON Customer.SupportRepId = Employee.EmployeeId
               INNER JOIN Invoice ON Customer.CustomerID = Invoice.CustomerID   
               INNER JOIN InvoiceLine ON InvoiceLine.InvoiceID = Invoice.InvoiceID    
               INNER JOIN Track ON InvoiceLine.TrackID = Track.TrackID  
               INNER JOIN Genre ON Track.GenreId = Genre.GenreId
-              WHERE Genre.Name NOT LIKE 'Rock' AND Employee.BirthDate < "1969-05-19"
+              WHERE Genre.Name NOT LIKE 'Rock' AND Employee.BirthDate < "1969-05-22"
               ORDER BY Employee.City ASC, Employee.Email DESC
               LIMIT 10    
             '''
@@ -67,8 +67,8 @@ def third():
               LEFT JOIN Invoice ON Customer.CustomerID = Invoice.CustomerID   
               LEFT JOIN InvoiceLine ON InvoiceLine.InvoiceID = Invoice.InvoiceID    
               LEFT JOIN Track ON InvoiceLine.TrackID = Track.TrackID    
-              WHERE Track.UnitPrice = (SELECT max(Track.UnitPrice) FROM Track)
-              ORDER BY Customer.FirstName
+              ORDER BY Track.UnitPrice DESC, Customer.FirstName ASC
+              LIMIT 10
             '''
         curID = con.cursor()
         curID.execute(query_invoice)
@@ -87,5 +87,6 @@ first()                                # работает
 #second()
 
 #Вывести отсортированный список клиентов (имя, телефон) оплативших самые дорогие музыкальные треки.
-
 #third()                                # работает
+
+
